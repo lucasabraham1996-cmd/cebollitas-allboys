@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,10 +17,6 @@
       --gold-soft: #f4d878;
       --gold-strong: #ffd84d;
       --gold-deep: #b8860b;
-      --dark: #050505;
-      --card: #101010;
-      --muted: rgba(255,255,255,.62);
-      --border: rgba(255,255,255,.10);
     }
 
     * { box-sizing: border-box; }
@@ -49,20 +46,15 @@
       box-shadow: 0 0 0 1px rgba(212,175,55,.10), 0 16px 40px rgba(0,0,0,.28);
     }
 
-    .logo-wrap {
-      width: 84px;
-      height: 84px;
-      border-radius: 22px;
-      background: radial-gradient(circle at center, rgba(255,216,77,.2), rgba(255,216,77,.06));
-      border: 1px solid rgba(212,175,55,.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 12px 28px rgba(0,0,0,.28), inset 0 0 18px rgba(255,216,77,.08);
+    .header-logo, .poster-logo {
+      display: block;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.35)) drop-shadow(0 0 10px rgba(255,216,77,.14));
       flex: 0 0 auto;
     }
 
-    .logo-wrap img { width: 64px; height: 64px; object-fit: contain; }
+    .header-logo { width: 84px; height: 84px; }
+    .poster-logo { width: 74px; height: 74px; }
 
     .player-card {
       position: relative;
@@ -247,19 +239,6 @@
       align-items: center;
       flex-wrap: wrap;
     }
-
-    .poster-logo-box {
-      width: 88px;
-      height: 88px;
-      border-radius: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(212,175,55,.34);
-      background: rgba(255,255,255,.04);
-      box-shadow: inset 0 0 30px rgba(255,216,77,.04);
-    }
-    .poster-logo-box img { width: 68px; height: 68px; object-fit: contain; }
 
     .poster-subtitle {
       font-size: 13px;
@@ -470,6 +449,8 @@
     }
 
     @media (max-width: 560px) {
+      .header-logo { width: 68px; height: 68px; }
+      .poster-logo { width: 58px; height: 58px; }
       .callup-grid,
       .callup-grid.count-1,
       .callup-grid.count-2,
@@ -501,7 +482,7 @@
 
         <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div class="flex items-start gap-4">
-            <div class="logo-wrap"><img id="headerLogo" src="https://i.postimg.cc/0260R0wF/5BACD90B-820A-4863-B4ED-7365BE6EA1C5.png" alt="Escudo" crossorigin="anonymous"></div>
+            <img id="headerLogo" class="header-logo" src="https://i.postimg.cc/0260R0wF/5BACD90B-820A-4863-B4ED-7365BE6EA1C5.png" alt="Escudo" crossorigin="anonymous">
             <div>
               <div class="inline-flex items-center gap-2 badge rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[.18em] mb-4">
                 <i data-lucide="shield" class="w-4 h-4"></i>
@@ -509,7 +490,7 @@
               </div>
               <h1 class="font-display text-5xl md:text-7xl leading-none">Cebollitas</h1>
               <p class="text-white/70 mt-3 max-w-2xl text-sm md:text-base">
-                Visualizador del plantel conectado a la hoja <strong>jugadores</strong>. También podés generar una placa de convocados tildando a los chicos que quieras.
+                Aquí se pueden ver todos los jugadores del plantel de Cebollitas del Club.
               </p>
             </div>
           </div>
@@ -555,7 +536,7 @@
         </button>
         <button id="downloadPosterBtn" class="btn-secondary rounded-2xl px-5 h-12 hidden items-center gap-2">
           <i data-lucide="download" class="w-5 h-5"></i>
-          Descargar placa en imagen
+          Descargar imagen de la placa
         </button>
       </div>
     </section>
@@ -588,11 +569,11 @@
           <input id="rivalInput" type="text" placeholder="Ej: Unión Florida" class="w-full h-11 rounded-xl bg-[#111] border border-white/10 px-4 outline-none focus:border-[#d4af37]" />
         </div>
         <div>
-          <label class="text-sm font-bold text-white/80 block mb-2">Citación</label>
+          <label class="text-sm font-bold text-white/80 block mb-2">Hora de citación</label>
           <input id="timeInput" type="text" placeholder="Ej: 14:00 hs" class="w-full h-11 rounded-xl bg-[#111] border border-white/10 px-4 outline-none focus:border-[#d4af37]" />
         </div>
         <div>
-          <label class="text-sm font-bold text-white/80 block mb-2">Lugar</label>
+          <label class="text-sm font-bold text-white/80 block mb-2">Estadio</label>
           <input id="placeInput" type="text" placeholder="Ej: Héroes de Malvinas" class="w-full h-11 rounded-xl bg-[#111] border border-white/10 px-4 outline-none focus:border-[#d4af37]" />
         </div>
       </div>
@@ -714,10 +695,8 @@
     function mapRow(row) {
       const normalized = {};
       Object.keys(row).forEach(key => normalized[normalizeKey(key)] = row[key]);
-
       const nombreCompleto = normalized.jugador || normalized.nombreyapellido || normalized.nombrecompleto || normalized.plantel || normalized.nombre || normalized.nombres || "";
       const rawPosition = normalized.puesto || normalized.posicion || normalized.pos || "Jugador";
-
       return {
         nombre: nombreCompleto,
         apellido: normalized.apellido || normalized.apellidos || "",
@@ -1000,6 +979,9 @@
       const place = $("#placeInput").value.trim();
       if (!selectedPlayers.length) { alert("Tildá al menos un jugador para generar la placa."); return; }
       if (!state.coach) { alert("No se detectó un DT en la planilla. Cargá un jugador con puesto DT."); return; }
+      if (!rival) { alert("Ingresá el rival a enfrentar."); return; }
+      if (!time) { alert("Ingresá la hora de citación."); return; }
+      if (!place) { alert("Ingresá el estadio."); return; }
 
       const playerCards = selectedPlayers.map(player => {
         const dorsal = formatDorsal(player.numero);
@@ -1015,7 +997,7 @@
       callupPoster.innerHTML = `
         <div class="poster-header">
           <div class="poster-brand-line">
-            <div class="poster-logo-box"><img src="${LOGO_URL}" alt="Escudo" crossorigin="anonymous"></div>
+            <img class="poster-logo" src="${LOGO_URL}" alt="Escudo" crossorigin="anonymous">
             <div>
               <div class="poster-subtitle">Club Atlético All Boys Córdoba</div>
               <div class="poster-title font-display text-[64px] md:text-[88px] text-white">Convocados</div>
@@ -1023,9 +1005,9 @@
             </div>
           </div>
           <div class="poster-meta">
-            ${rival ? `<div class="poster-meta-box"><div class="label">Rival</div><div class="value">${escapeHtml(rival)}</div></div>` : ""}
-            ${time ? `<div class="poster-meta-box"><div class="label">Citación</div><div class="value">${escapeHtml(time)}</div></div>` : ""}
-            ${place ? `<div class="poster-meta-box"><div class="label">Lugar</div><div class="value">${escapeHtml(place)}</div></div>` : ""}
+            <div class="poster-meta-box"><div class="label">Rival</div><div class="value">${escapeHtml(rival)}</div></div>
+            <div class="poster-meta-box"><div class="label">Citación</div><div class="value">${escapeHtml(time)}</div></div>
+            <div class="poster-meta-box"><div class="label">Estadio</div><div class="value">${escapeHtml(place)}</div></div>
           </div>
         </div>
         <div class="callup-grid ${gridClassByCount(selectedPlayers.length)}">${playerCards}</div>
@@ -1055,19 +1037,33 @@
     }
 
     async function downloadPoster() {
-      if (!state.posterGenerated) return;
-      await waitForImages(callupPoster);
-      const canvas = await html2canvas(callupPoster, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        logging: false
-      });
-      const link = document.createElement("a");
-      link.download = "placa-convocados-cebollitas.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+      if (!state.posterGenerated) {
+        alert("Primero generá la placa.");
+        return;
+      }
+      try {
+        downloadPosterBtn.disabled = true;
+        downloadPosterBtn.textContent = 'Generando imagen...';
+        await waitForImages(callupPoster);
+        const canvas = await html2canvas(callupPoster, {
+          backgroundColor: null,
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          logging: false
+        });
+        const link = document.createElement("a");
+        link.download = "placa-convocados-cebollitas.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      } catch (error) {
+        console.error(error);
+        alert("No se pudo descargar la imagen de la placa.");
+      } finally {
+        downloadPosterBtn.disabled = false;
+        downloadPosterBtn.innerHTML = '<i data-lucide="download" class="w-5 h-5"></i> Descargar imagen de la placa';
+        lucide.createIcons();
+      }
     }
 
     searchInput.addEventListener("input", (event) => { state.search = event.target.value; render(); });
